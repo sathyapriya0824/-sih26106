@@ -10,6 +10,13 @@ Backend:
 """
 
 import os
+import sys
+
+# Ensure backend directory is always in sys.path
+_CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if _CURRENT_DIR not in sys.path:
+    sys.path.insert(0, _CURRENT_DIR)
+
 import json
 import sqlite3
 import uuid
@@ -37,8 +44,20 @@ from report import build_pdf_report
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
+PUBLIC_DIR = os.path.join(os.path.dirname(BASE_DIR), "public")
+STATIC_DIR = FRONTEND_DIR if os.path.exists(os.path.join(FRONTEND_DIR, "index.html")) else (
+    PUBLIC_DIR if os.path.exists(PUBLIC_DIR) else BASE_DIR
+)
+
 if os.environ.get("VERCEL"):
     DB_PATH = "/tmp/cases.db"
+    orig_db = os.path.join(BASE_DIR, "cases.db")
+    if not os.path.exists(DB_PATH) and os.path.exists(orig_db):
+        import shutil
+        try:
+            shutil.copyfile(orig_db, DB_PATH)
+        except Exception:
+            pass
 else:
     DB_PATH = os.path.join(BASE_DIR, "cases.db")
 
@@ -48,7 +67,7 @@ else:
 
 app = Flask(
     __name__,
-    static_folder=FRONTEND_DIR,
+    static_folder=STATIC_DIR,
     static_url_path=""
 )
 
@@ -60,10 +79,11 @@ app.secret_key = os.environ.get(
     "CHANGE_THIS_SECRET_BEFORE_PRODUCTION_9f8a7c6d"
 )
 
+is_vercel = bool(os.environ.get("VERCEL"))
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=False,   # Change to True when deployed with HTTPS
+    SESSION_COOKIE_SECURE=is_vercel,
     PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
 )
 
@@ -75,7 +95,7 @@ CORS(app, supports_credentials=True)
 # --------------------------------------------------------------------------
 
 def db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=15)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -238,32 +258,44 @@ def role_required(*allowed_roles):
 
 
 # --------------------------------------------------------------------------
-# Frontend
+# Frontend & Health
 # --------------------------------------------------------------------------
+
+@app.route("/api/health")
+@app.route("/api")
+def api_health():
+    return jsonify({
+        "status": "healthy",
+        "service": "Sentinel Trace Forensic API",
+        "version": "1.0.0"
+    })
+
 
 @app.route("/")
 def index():
-
-    return send_from_directory(
-        FRONTEND_DIR,
-        "index.html"
-    )
+    if os.path.exists(os.path.join(STATIC_DIR, "index.html")):
+        return send_from_directory(
+            STATIC_DIR,
+            "index.html"
+        )
+    return jsonify({
+        "status": "online",
+        "service": "Sentinel Trace Forensic API",
+        "version": "1.0.0"
+    })
 
 
 @app.route("/<path:path>")
 def static_files(path):
-
     full = os.path.join(
-        FRONTEND_DIR,
+        STATIC_DIR,
         path
     )
-
     if os.path.isfile(full):
         return send_from_directory(
-            FRONTEND_DIR,
+            STATIC_DIR,
             path
         )
-
     abort(404)
 
 
