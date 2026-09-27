@@ -1,0 +1,20 @@
+Received: by 10.28.55.132 with SMTP id local; Mon, 22 Sep 2026 09:02:11 -0700 (PDT)
+Received: from mail.company.com (mail.company.com [8.8.8.8])
+    by mx.recipientdomain.com with ESMTPS id z7m1; Mon, 22 Sep 2026 09:02:05 -0700 (PDT)
+Authentication-Results: mx.recipientdomain.com; spf=pass smtp.mailfrom=company.com; dkim=pass; dmarc=pass
+Return-Path: <notifications@company.com>
+From: "Company Notifications" <notifications@company.com>
+To: employee@recipientdomain.com
+Subject: Your weekly team digest is ready
+Date: Mon, 22 Sep 2026 09:02:00 +0000
+Message-ID: <weekly-digest-2026-09-22@company.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+
+Hi there,
+
+Here is your weekly team digest with project updates and upcoming meetings.
+You can view the full digest on the internal dashboard at https://dashboard.company.com/digest
+
+Thanks,
+The Company Team

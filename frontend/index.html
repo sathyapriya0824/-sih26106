@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sentinel Trace — Email Threat &amp; Forensic Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+/* =========================
+   LOGIN SCREEN
+========================= */
+
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #080f1f;
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.login-box {
+  width: 380px;
+  padding: 40px;
+  border: 1px solid #263b59;
+  border-radius: 18px;
+  background: #111c2f;
+  box-shadow: 0 20px 60px rgba(0,0,0,.45);
+}
+
+.login-logo {
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 18px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #25c9bd;
+  color: #07111f;
+  font-size: 28px;
+}
+
+.login-box h1 {
+  text-align: center;
+  margin: 0;
+  color: #ffffff;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: #7c9abb;
+  font-size: 13px;
+  margin-bottom: 30px;
+}
+
+.login-box label {
+  display: block;
+  color: #9db4d0;
+  font-size: 13px;
+  margin: 15px 0 7px;
+}
+
+.login-box input,
+.login-box select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  border-radius: 8px;
+  border: 1px solid #304762;
+  background: #091222;
+  color: white;
+  outline: none;
+}
+
+.login-box input:focus,
+.login-box select:focus {
+  border-color: #35d1c0;
+}
+
+.login-box select {
+  cursor: pointer;
+}
+
+.login-box select option {
+  background: #091222;
+  color: white;
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 24px;
+  padding: 13px;
+  border: 0;
+  border-radius: 8px;
+  background: #35d1c0;
+  color: #06121d;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.login-btn:hover {
+  opacity: .9;
+}
+
+.login-error {
+  color: #ff5d5d;
+  text-align: center;
+  margin-top: 12px;
+  min-height: 18px;
+  font-size: 13px;
+}
+
+.demo-login {
+  margin-top: 22px;
+  text-align: center;
+  color: #7187a5;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.role-info {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #0b1728;
+  border: 1px solid #203652;
+  color: #7187a5;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     LOGIN SCREEN
+===================================================== -->
+
+<div id="loginScreen" class="login-screen">
+
+  <div class="login-box">
+
+    <div class="login-logo">◈</div>
+
+    <h1>Sentinel Trace</h1>
+
+    <p class="login-subtitle">
+      Email Forensic Intelligence · SIH26106
+    </p>
+
+    <form id="loginForm" onsubmit="return false;">
+
+      <!-- USERNAME -->
+
+      <label for="loginUsername">
+        Username
+      </label>
+
+      <input
+        type="text"
+        id="loginUsername"
+        placeholder="Enter username"
+        autocomplete="username"
+        required
+      >
+
+
+      <!-- PASSWORD -->
+
+      <label for="loginPassword">
+        Password
+      </label>
+
+      <input
+        type="password"
+        id="loginPassword"
+        placeholder="Enter password"
+        autocomplete="current-password"
+        required
+      >
+
+
+      <!-- ROLE -->
+
+      <label for="loginRole">
+        Select Role
+      </label>
+
+      <select id="loginRole" required>
+
+        <option value="">
+          -- Select your role --
+        </option>
+
+        <option value="user">
+          👤 User
+        </option>
+
+        <option value="analyst">
+          🛡️ Security Analyst
+        </option>
+
+        <option value="investigator">
+          🔎 Investigator
+        </option>
+
+        <option value="admin">
+          👑 Administrator
+        </option>
+
+      </select>
+
+
+      <!-- LOGIN BUTTON -->
+
+      <button
+        type="button"
+        class="login-btn"
+        onclick="doLogin()"
+      >
+        Secure Login
+      </button>
+
+
+      <!-- ERROR -->
+
+      <div
+        id="loginError"
+        class="login-error"
+      ></div>
+
+    </form>
+
+
+    <!-- ROLE INFORMATION -->
+
+    <div class="role-info">
+
+      <strong>Access Levels</strong><br>
+
+      User → Submit &amp; analyze evidence<br>
+      Analyst → Analysis + case history<br>
+      Investigator → Cases + forensic reports<br>
+      Administrator → Full system access
+
+    </div>
+
+
+    <!-- DEMO LOGIN -->
+
+    <div class="demo-login">
+
+      Demo Accounts:<br>
+
+      <strong>admin</strong> /
+      <strong>SentinelAdmin@2026</strong>
+
+      <br>
+
+      <strong>analyst</strong> /
+      <strong>Analyst@2026</strong>
+
+      <br>
+
+      <strong>investigator</strong> /
+      <strong>Investigator@2026</strong>
+
+      <br>
+
+      <strong>user</strong> /
+      <strong>User@2026</strong>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN APPLICATION
+===================================================== -->
+
+<div class="app" id="appShell" hidden>
+
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      <div class="brand-mark">
+        ◈
+      </div>
+
+      <div>
+
+        <div class="brand-name">
+          Sentinel&nbsp;Trace
+        </div>
+
+        <div class="brand-sub">
+          Email Forensic Intelligence · SIH26106
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- SUBMIT EVIDENCE -->
+
+    <div class="panel upload-panel">
+
+      <h3>
+        Submit evidence
+      </h3>
+
+      <p class="hint">
+        Upload a raw <code>.eml</code> file,
+        or paste the full email source
+        (headers included).
+      </p>
+
+
+      <label
+        class="dropzone"
+        id="dropzone"
+      >
+
+        <input
+          type="file"
+          id="fileInput"
+          accept=".eml,.txt,message/rfc822"
+          hidden
+        >
+
+        <span id="dropzoneLabel">
+          Drop .eml file or click to browse
+        </span>
+
+      </label>
+
+
+      <textarea
+        id="rawText"
+        placeholder="...or paste raw email source here (including headers)"
+      ></textarea>
+
+
+      <div class="sample-row">
+
+        <span class="hint">
+          Try a sample:
+        </span>
+
+        <button
+          class="chip"
+          data-sample="phishing"
+        >
+          Phishing case
+        </button>
+
+        <button
+          class="chip"
+          data-sample="legit"
+        >
+          Legitimate case
+        </button>
+
+      </div>
+
+
+      <button
+        id="analyzeBtn"
+        class="btn-primary"
+      >
+        Run forensic analysis
+      </button>
+
+      <div
+        id="statusLine"
+        class="status-line"
+      ></div>
+
+    </div>
+
+
+    <!-- CASE HISTORY -->
+
+    <div class="panel history-panel">
+
+      <h3>
+        Case history
+      </h3>
+
+      <div
+        id="historyList"
+        class="history-list"
+      >
+
+        <div class="empty-note">
+          No cases analyzed yet this session.
+        </div>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =================================================
+       MAIN CONTENT
+  ================================================= -->
+
+  <main class="main">
+
+
+    <!-- EMPTY STATE -->
+
+    <div
+      id="emptyState"
+      class="empty-state"
+    >
+
+      <div class="empty-glyph">
+        ⌁
+      </div>
+
+      <h1>
+        No case loaded
+      </h1>
+
+      <p>
+        Submit an email on the left to generate
+        a threat score, trace its delivery path
+        across the internet, and produce a
+        forensic report.
+      </p>
+
+    </div>
+
+
+    <!-- RESULT VIEW -->
+
+    <div
+      id="resultView"
+      class="result-view"
+      hidden
+    >
+
+
+      <!-- CASE HEADER -->
+
+      <header class="case-header">
+
+        <div>
+
+          <div
+            class="case-id"
+            id="caseId"
+          >
+            CASE —
+          </div>
+
+          <h1 id="caseSubject">
+            —
+          </h1>
+
+          <div class="meta-row">
+
+            <span>
+              <strong>From</strong>
+              <span id="caseFrom">—</span>
+            </span>
+
+            <span>
+              <strong>To</strong>
+              <span id="caseTo">—</span>
+            </span>
+
+            <span>
+              <strong>Date</strong>
+              <span id="caseDate">—</span>
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- SCORE -->
+
+        <div class="score-block">
+
+          <svg
+            viewBox="0 0 120 120"
+            class="gauge"
+          >
+
+            <circle
+              cx="60"
+              cy="60"
+              r="52"
+              class="gauge-track"
+            />
+
+            <circle
+              cx="60"
+              cy="60"
+              r="52"
+              class="gauge-fill"
+              id="gaugeFill"
+            />
+
+            <text
+              x="60"
+              y="56"
+              class="gauge-num"
+              id="gaugeNum"
+            >
+              0
+            </text>
+
+            <text
+              x="60"
+              y="74"
+              class="gauge-label"
+            >
+              / 100
+            </text>
+
+          </svg>
+
+
+          <div
+            class="risk-pill"
+            id="riskPill"
+          >
+            LOW
+          </div>
+
+
+          <button
+            id="downloadReport"
+            class="btn-secondary"
+          >
+            Download PDF report
+          </button>
+
+        </div>
+
+      </header>
+
+
+      <!-- TABS -->
+
+      <nav class="tabs">
+
+        <button
+          class="tab active"
+          data-tab="overview"
+        >
+          Overview
+        </button>
+
+        <button
+          class="tab"
+          data-tab="path"
+        >
+          Delivery Path
+        </button>
+
+        <button
+          class="tab"
+          data-tab="geo"
+        >
+          GeoLocation
+        </button>
+
+        <button
+          class="tab"
+          data-tab="content"
+        >
+          Content &amp; Links
+        </button>
+
+        <button
+          class="tab"
+          data-tab="attachments"
+        >
+          Attachments
+        </button>
+
+      </nav>
+
+
+      <!-- OVERVIEW -->
+
+      <section
+        class="tab-panel"
+        id="tab-overview"
+      >
+
+        <div class="grid-2">
+
+          <div class="panel">
+
+            <h3>
+              Authentication
+            </h3>
+
+            <div
+              class="auth-grid"
+              id="authGrid"
+            ></div>
+
+          </div>
+
+
+          <div class="panel">
+
+            <h3>
+              Language risk model
+            </h3>
+
+            <div class="lang-bar-wrap">
+
+              <div class="lang-bar-track">
+
+                <div
+                  class="lang-bar-fill"
+                  id="langBarFill"
+                ></div>
+
+              </div>
+
+              <div
+                class="lang-score"
+                id="langScore"
+              >
+                0 / 100
+              </div>
+
+            </div>
+
+            <div class="hint">
+
+              Weighted lexical model flags
+              phishing-style urgency,
+              credential, and financial-fraud language.
+
+            </div>
+
+            <div
+              class="phrase-chips"
+              id="phraseChips"
+            ></div>
+
+          </div>
+
+        </div>
+
+
+        <div class="panel">
+
+          <h3>
+            Risk findings
+          </h3>
+
+          <div
+            id="findingsList"
+            class="findings-list"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- DELIVERY PATH -->
+
+      <section
+        class="tab-panel"
+        id="tab-path"
+        hidden
+      >
+
+        <div class="panel">
+
+          <h3>
+            Received header chain
+            (origin → recipient)
+          </h3>
+
+          <div
+            id="hopTimeline"
+            class="hop-timeline"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- GEOLOCATION -->
+
+      <section
+        class="tab-panel"
+        id="tab-geo"
+        hidden
+      >
+
+        <div class="panel">
+
+          <h3>
+            Geographic trace
+          </h3>
+
+          <div
+            id="map"
+            class="map"
+          ></div>
+
+          <div
+            id="geoTable"
+            class="geo-table"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- CONTENT -->
+
+      <section
+        class="tab-panel"
+        id="tab-content"
+        hidden
+      >
+
+        <div class="panel">
+
+          <h3>
+            Suspicious links
+          </h3>
+
+          <div
+            id="linksList"
+            class="links-list"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ATTACHMENTS -->
+
+      <section
+        class="tab-panel"
+        id="tab-attachments"
+        hidden
+      >
+
+        <div class="panel">
+
+          <h3>
+            Attachment forensics
+          </h3>
+
+          <div
+            id="attachmentsList"
+            class="attachments-list"
+          ></div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- JAVASCRIPT -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script src="samples.js"></script>
+
+<script src="app.js"></script>
+
+</body>
+</html>

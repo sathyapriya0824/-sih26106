@@ -1,0 +1,39 @@
+Received: by 10.28.55.132 with SMTP id victim; Mon, 22 Sep 2026 03:14:02 -0700 (PDT)
+Received: from mail-relay03.suspicious-host.ru (mail-relay03.suspicious-host.ru [185.220.101.47])
+    by mx.recipientdomain.com with ESMTPS id x9k2; Mon, 22 Sep 2026 03:13:58 -0700 (PDT)
+Received: from smtp-out.free-mailer.net (smtp-out.free-mailer.net [103.21.244.10])
+    by mail-relay03.suspicious-host.ru with SMTP; Mon, 22 Sep 2026 10:13:40 +0000
+Authentication-Results: mx.recipientdomain.com; spf=fail smtp.mailfrom=paypal-secure.com; dkim=none; dmarc=fail
+Return-Path: <billing@paypal-secure.com>
+From: "PayPal Security" <service@paypal-secure.com>
+Reply-To: recover-support@secure-mail-help.info
+To: victim@recipientdomain.com
+Subject: URGENT: Your account will be suspended - verify your account now
+Date: Mon, 22 Sep 2026 10:13:00 +0000
+Message-ID: <a1b2c3d4@free-mailer.net>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="BOUND1"
+
+--BOUND1
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+<html><body>
+<p>Dear Customer,</p>
+<p>We detected <b>unusual activity</b> on your account. Your account will be closed
+within 24 hours unless you <b>verify your account</b> immediately.</p>
+<p><a href="http://185.220.101.47/paypal-login/verify.php">Click here to verify your account</a></p>
+<p>If you do not act now, your funds will be frozen. This is an urgent action required
+to avoid permanent suspension.</p>
+<p>Regards,<br>PayPal Security Team</p>
+</body></html>
+
+--BOUND1
+Content-Type: application/octet-stream; name="Invoice_Statement.pdf.exe"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Invoice_Statement.pdf.exe"
+
+VGhpcyBpcyBhIHNhbXBsZSBwYXlsb2FkIGZvciBkZW1vbnN0cmF0aW9uIHB1cnBvc2VzIG9ubHku
+Cg==
+
+--BOUND1--
