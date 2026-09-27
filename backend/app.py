@@ -37,8 +37,10 @@ from report import build_pdf_report
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), "frontend")
-DB_PATH = os.path.join(BASE_DIR, "cases.db")
-
+if os.environ.get("VERCEL"):
+    DB_PATH = "/tmp/cases.db"
+else:
+    DB_PATH = os.path.join(BASE_DIR, "cases.db")
 
 # --------------------------------------------------------------------------
 # Flask App
