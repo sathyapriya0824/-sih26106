@@ -82,13 +82,17 @@ app.secret_key = os.environ.get(
 is_vercel = bool(os.environ.get("VERCEL"))
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SAMESITE = "None"
+    SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE=is_vercel,
     PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
 )
 
-CORS(app, supports_credentials=True)
-
+CORS(
+    app,
+    origins=["https://sathyapriya0824.github.io"],
+    supports_credentials=True
+)
 
 # --------------------------------------------------------------------------
 # Database
