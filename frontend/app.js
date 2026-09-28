@@ -1,5 +1,4 @@
-const API_BASE = window.location.origin;
-
+const API_BASE = "https://sih26106-delta.vercel.app";
 // =====================================================
 // BACKEND LOGIN + ROLE MANAGEMENT
 // =====================================================
